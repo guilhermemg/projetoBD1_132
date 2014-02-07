@@ -32,7 +32,9 @@ CREATE TABLE Jogo(
 
 CREATE TABLE Estadio(
     nome VARCHAR(255) PRIMARY KEY,
-    capacidade INT
+    capacidade INT,
+    
+    CONSTRAINT pk_Estadio PRIMARY KEY (nome)
 );
 
 CREATE TABLE Endereco(
