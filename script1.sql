@@ -7,25 +7,23 @@ DROP TABLE ParticipaJogo CASCADE CONSTRAINTS;
 DROP TABLE Profissional CASCADE CONSTRAINTS;
 DROP TABLE Jogador CASCADE CONSTRAINTS;
 DROP TABLE Tecnico CASCADE CONSTRAINTS;
+
 DROP TABLE JogosArbitrados CASCADE CONSTRAINTS;
 DROP TABLE ProfissionaisDosTimes CASCADE CONSTRAINTS;
 DROP TABLE JogadoresEmJogos CASCADE CONSTRAINTS;
 DROP TABLE Goleadores CASCADE CONSTRAINTS;
 DROP TABLE AtuacaoTecnicos CASCADE CONSTRAINTS;
 
--- falta fazer o incrementar sozinho, pq ao ta aceitando o auto increment.
+-- falta fazer o incrementar sozinho, pq nao ta aceitando o auto increment. 
 
 /*
-   
     ENTIDADES
-    
-    
 */
 
 CREATE TABLE Campeonato(
     id INT NOT NULL,
     ano INT NOT NULL,
-    nome VARCHAR(50),
+    nome VARCHAR(255),
     dataInicio DATE NOT NULL,
     dataFim DATE NOT NULL,
 
@@ -34,7 +32,7 @@ CREATE TABLE Campeonato(
 
 CREATE TABLE Arbitragem(
     matricula INT NOT NULL,
-    nome VARCHAR(50),
+    nome VARCHAR(255) NOT NULL,
     dataDeNascimento DATE,
 
     CONSTRAINT pk_Arbitragem PRIMARY KEY (matricula)
@@ -42,7 +40,7 @@ CREATE TABLE Arbitragem(
 
 CREATE TABLE Jogo(
     numero INT NOT NULL,
-    DataHora TIMESTAMP NOT NULL,
+    dataHora TIMESTAMP NOT NULL,
     id INT NOT NULL,
 
     CONSTRAINT pk_Jogo PRIMARY KEY (numero),
@@ -51,21 +49,21 @@ CREATE TABLE Jogo(
 
 CREATE TABLE Estadio(
     nome VARCHAR(255),
-    capacidade INT,
-    nomeEstadio VARCHAR(255),
-    cep CHAR(10),
+    capacidade INT NOT NULL,
+    nomeEstadio VARCHAR(255) NOT NULL,
+    cep CHAR(10) NOT NULL,
     logradouro VARCHAR(255),
     num INT,
     bairro VARCHAR(255),
-    cidade VARCHAR(255),
-    estado CHAR(2),
+    cidade VARCHAR(255) NOT NULL,
+    estado CHAR(2) NOT NULL,
     
     CONSTRAINT pk_Estadio PRIMARY KEY (nome)
 );
 
 CREATE TABLE Time(
     numCadastro INT NOT NULL,
-    nome VARCHAR(255),
+    nome VARCHAR(255) NOT NULL,
     cidade VARCHAR(255),
     nomeEstadio VARCHAR(255) NOT NULL,
 
@@ -90,8 +88,8 @@ CREATE TABLE Jogador(
     
     CONSTRAINT pk_Jogador PRIMARY KEY (cadastro),
     CONSTRAINT fk_donoDoPasse FOREIGN KEY (donoDoPasse) REFERENCES Time(numCadastro),
-    CONSTRAINT fk_cadastro FOREIGN KEY (cadastro) REFERENCES Profissional(numCadastro)
-);
+    CONSTRAINT fk_cadastro FOREIGN KEY (cadastro) REFERENCES Profissional(numCadastro) 
+); 
 
 CREATE TABLE Tecnico(
     cadastro INT NOT NULL,
@@ -103,12 +101,8 @@ CREATE TABLE Tecnico(
 
 
 /*
-    
      RELACIONAMENTOS
-    
-
 */
-
 
 CREATE TABLE ParticipaJogo(
     numCadastroTime INT NOT NULL,
@@ -121,12 +115,12 @@ CREATE TABLE ParticipaJogo(
 );
 
 CREATE TABLE JogosArbitrados(
-    arbitroDoJogo INT NOT NULL,
+    ArbitragemDoJogo INT NOT NULL,
     jogoArbitrado INT NOT NULL,
     funcao VARCHAR(50) NOT NULL,
     
-    CONSTRAINT pk_JogosArbitrados PRIMARY KEY (arbitroDoJogo, jogoArbitrado),
-    CONSTRAINT fk_arbitroDoJogo FOREIGN KEY (arbitroDoJogo) REFERENCES Arbitragem(matricula),
+    CONSTRAINT pk_JogosArbitrados PRIMARY KEY (ArbitragemDoJogo, jogoArbitrado),
+    CONSTRAINT fk_ArbitragemDoJogo FOREIGN KEY (ArbitragemDoJogo) REFERENCES Arbitragem(matricula),
     CONSTRAINT fk_jogoArbitrado FOREIGN KEY (jogoArbitrado) REFERENCES Jogo(numero)
 );
 
@@ -173,10 +167,146 @@ CREATE TABLE AtuacaoTecnicos(
     CONSTRAINT fk_jogoDoTecnico FOREIGN KEY (jogoDoTecnico) REFERENCES Jogo(numero)
 );
 
+--======INSERCOES==========================================================
+
+------CAMPEONATOS-----------------------------------------------
+
 INSERT INTO Campeonato(id, ano, nome, dataInicio, dataFim) VALUES(1, 2014, 'Brasileiro', TO_DATE('04.02.2014'), TO_DATE('12.02.2014'));
 INSERT INTO Campeonato(id, ano, nome, dataInicio, dataFim) VALUES(2, 2014, 'Paraibano', TO_DATE('04.12.2015'), TO_DATE('12.02.2014'));
 INSERT INTO Campeonato(id, ano, nome, dataInicio, dataFim) VALUES(3, 2014, 'Carioca', TO_DATE('12.02.2014'), TO_DATE('12.02.2014'));
 INSERT INTO Campeonato(id, ano, nome, dataInicio, dataFim) VALUES(4, 2014, 'Copa do Mundo', TO_DATE('02.12.2016'), TO_DATE('12.02.2014'));
 
+-------ESTADIOS--------------------------------------------------
+
+INSERT INTO Estadio VALUES ('E1', 40000, 'N1', '11.111-11', 'R1' , 1245, 'B1', 'C1', 'E1');
+INSERT INTO Estadio VALUES ('E2', 75000, 'N1', '11.141-11', 'R2' , 54, 'B2', 'C2', 'E1');
+INSERT INTO Estadio VALUES ('E3', 50000, 'N1', '11.131-11', 'R3' , 74, 'B3', 'C3', 'E2');
+
+---------TIMES--------------------------------------------------
+
+-- colocar restricao para cada time ter um estadio diferente?
+INSERT INTO Time VALUES (1, 'NT1', 'E1');
+INSERT INTO Time VALUES (2, 'NT2', 'E2');
+INSERT INTO Time VALUES (3, 'NT3', 'E3'); 
+INSERT INTO Time VALUES (4, 'NT4', 'E1');
+INSERT INTO Time VALUES (5, 'NT5', 'E1');
+INSERT INTO Time VALUES (6, 'NT6', 'E2');
+
+-----ARBITRAGEM---------------------------------------------------
+
+-- podem arbitros terem o mesmo nome?
+INSERT INTO Arbitragem VALUES (1, 'NArb1', TO_DATE('05.15.1989'));
+INSERT INTO Arbitragem VALUES (2, 'NArb2', TO_DATE('09.21.1960'));
+INSERT INTO Arbitragem VALUES (3, 'NArb3', TO_DATE('12.30.1982'));
+
+-----PROFISSIONAIS-------------------------------------------------
+
+-- 24 jogadores profissionais
+INSERT INTO Profissional VALUES(1, 'NP1', 'A1', TO_DATE('12.12.1991'));
+INSERT INTO Profissional VALUES(2, 'NP2', 'A2', TO_DATE('12.17.1991'));
+INSERT INTO Profissional VALUES(3, 'NP3', 'A3', TO_DATE('11.12.1991'));
+INSERT INTO Profissional VALUES(4, 'NP4', 'A4', TO_DATE('07.12.1991'));
+INSERT INTO Profissional VALUES(5, 'NP5', 'A5', TO_DATE('12.29.1991'));
+INSERT INTO Profissional VALUES(6, 'NP6', 'A6', TO_DATE('12.12.1994'));
+INSERT INTO Profissional VALUES(7, 'NP7', 'A7', TO_DATE('12.12.1993'));
+INSERT INTO Profissional VALUES(8, 'NP8', 'A8', TO_DATE('12.12.1992'));
+INSERT INTO Profissional VALUES(9, 'NP9', 'A9', TO_DATE('12.12.1990'));
+INSERT INTO Profissional VALUES(10, 'NP10', 'A10', TO_DATE('12.12.1983'));
+INSERT INTO Profissional VALUES(11, 'NP11', 'A11', TO_DATE('12.12.1991'));
+INSERT INTO Profissional VALUES(12, 'NP12', 'A12', TO_DATE('12.17.1991'));
+INSERT INTO Profissional VALUES(13, 'NP13', 'A13', TO_DATE('12.12.1991'));
+INSERT INTO Profissional VALUES(14, 'NP14', 'A14', TO_DATE('12.12.1991'));
+INSERT INTO Profissional VALUES(15, 'NP15', 'A15', TO_DATE('12.12.1991'));
+INSERT INTO Profissional VALUES(16, 'NP16', 'A16', TO_DATE('12.12.1991'));
+INSERT INTO Profissional VALUES(17, 'NP17', 'A17', TO_DATE('12.12.1991'));
+INSERT INTO Profissional VALUES(18, 'NP18', 'A18', TO_DATE('12.12.1991'));
+INSERT INTO Profissional VALUES(19, 'NP19', 'A19', TO_DATE('12.12.1991'));
+INSERT INTO Profissional VALUES(20, 'NP20', 'A20', TO_DATE('12.12.1991'));
+INSERT INTO Profissional VALUES(21, 'NP21', 'A21', TO_DATE('12.12.1991'));
+INSERT INTO Profissional VALUES(22, 'NP22', 'A22', TO_DATE('12.12.1991'));
+INSERT INTO Profissional VALUES(23, 'NP23', 'A23', TO_DATE('12.12.1991'));
+INSERT INTO Profissional VALUES(24, 'NP24', 'A24', TO_DATE('12.12.1991'));
+
+-- 6 tecnicos : 1 para cada time
+INSERT INTO Profissional VALUES(25, 'NP25', 'A25', TO_DATE('12.12.1991'));
+INSERT INTO Profissional VALUES(26, 'NP26', 'A26', TO_DATE('12.12.1991'));
+INSERT INTO Profissional VALUES(27, 'NP27', 'A27', TO_DATE('12.12.1991'));
+INSERT INTO Profissional VALUES(28, 'NP28', 'A28', TO_DATE('12.12.1991'));
+INSERT INTO Profissional VALUES(29, 'NP29', 'A29', TO_DATE('12.12.1991'));
+INSERT INTO Profissional VALUES(30, 'NP30', 'A30', TO_DATE('12.12.1991'));
+
+-----JOGADORES----------------------------------------------------
+
+-- colocar restricao em Jogador para dataInicialDoPasse < dataFinalDoPasse
+
+INSERT INTO Jogador VALUES (1, 1, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+INSERT INTO Jogador VALUES (2, 1, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+INSERT INTO Jogador VALUES (3, 1, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+INSERT INTO Jogador VALUES (4, 1, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+
+INSERT INTO Jogador VALUES (5, 2, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+INSERT INTO Jogador VALUES (6, 2, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+INSERT INTO Jogador VALUES (7, 2, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+INSERT INTO Jogador VALUES (8, 2, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+
+INSERT INTO Jogador VALUES (9, 3, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+INSERT INTO Jogador VALUES (10, 3, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+INSERT INTO Jogador VALUES (11, 3, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+INSERT INTO Jogador VALUES (12, 3, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+
+INSERT INTO Jogador VALUES (13, 4, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+INSERT INTO Jogador VALUES (14, 4, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+INSERT INTO Jogador VALUES (15, 4, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+INSERT INTO Jogador VALUES (16, 4, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+
+INSERT INTO Jogador VALUES (17, 5, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+INSERT INTO Jogador VALUES (18, 5, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+INSERT INTO Jogador VALUES (19, 5, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+INSERT INTO Jogador VALUES (20, 5, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+
+INSERT INTO Jogador VALUES (21, 6, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+INSERT INTO Jogador VALUES (22, 6, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+INSERT INTO Jogador VALUES (23, 6, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+INSERT INTO Jogador VALUES (24, 6, TO_DATE('12.12.1991'), TO_DATE('12.12.1992'));
+
+-- TECNICOS -------------------------------------------
+
+INSERT INTO Tecnico VALUES (25);
+INSERT INTO Tecnico VALUES (26);
+INSERT INTO Tecnico VALUES (27);
+INSERT INTO Tecnico VALUES (28);
+INSERT INTO Tecnico VALUES (29);
+INSERT INTO Tecnico VALUES (30);
+
+-- JOGOS ----------------------------------------------
+
+-- colocar restricoes de data: a horaData do jogo deve estar dentro da dataInicio e dataFim do Campeonato
+-- colocar restricao: dois jogos nao podem ocorrer no mesmo horario no mesmo estadio 
+
+INSERT INTO Jogo VALUES (1, TO_TIMESTAMP('12.12.1991 20:00:00', 'YYYY.MM.DD HH24:MI:SS'), 1, 'E1');
+INSERT INTO Jogo VALUES (2, TO_TIMESTAMP('12.12.1991 20:00:00', 'YYYY.MM.DD HH24:MI:SS'), 1, 'E2');
+INSERT INTO Jogo VALUES (3, TO_TIMESTAMP('12.12.1991 20:00:00', 'YYYY.MM.DD HH24:MI:SS'), 1, 'E3');
+
+INSERT INTO Jogo VALUES (4, TO_TIMESTAMP('12.12.1991 20:00:00', 'YYYY.MM.DD HH24:MI:SS'), 2, 'E1');
+INSERT INTO Jogo VALUES (5, TO_TIMESTAMP('12.12.1991 20:00:00', 'YYYY.MM.DD HH24:MI:SS'), 2, 'E2');
+INSERT INTO Jogo VALUES (6, TO_TIMESTAMP('12.12.1991 20:00:00', 'YYYY.MM.DD HH24:MI:SS'), 2, 'E3');
+
+INSERT INTO Jogo VALUES (7, TO_TIMESTAMP('12.12.1991 20:00:00', 'YYYY.MM.DD HH24:MI:SS'), 3, 'E1');
+INSERT INTO Jogo VALUES (8, TO_TIMESTAMP('12.12.1991 20:00:00', 'YYYY.MM.DD HH24:MI:SS'), 3, 'E2');
+
+INSERT INTO Jogo VALUES (9, TO_TIMESTAMP('12.12.1991 20:00:00', 'YYYY.MM.DD HH24:MI:SS'), 4, 'E2');
+INSERT INTO Jogo VALUES (10, TO_TIMESTAMP('12.12.1991 20:00:00', 'YYYY.MM.DD HH24:MI:SS'), 4, 'E3');
+
+---SELECTS------------------------------------------------------
 
 SELECT * FROM Campeonato;
+SELECT * FROM Estadio;
+SELECT * FROM Time;
+SELECT * FROM Arbitragem;
+SELECT * FROM Jogador;
+SELECT * FROM Tecnico;
+SELECT * FROM Jogo;
+
+
+
+​
