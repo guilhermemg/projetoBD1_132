@@ -37,6 +37,17 @@ SELECT "nome" FROM  T_ESTADIO ORDER BY "capacidade" DESC;
 SELECT AVG("capacidade") FROM T_ESTADIO;
 
 -- 8. Liste somente os jogadores que um time especifico possui passe no momento da consulta.
+SELECT "nome"
+FROM T_PROFISSIONAL
+WHERE "numCadastro" IN
+(
+    SELECT "numJogador"
+    FROM T_TIME_PASSE_JOG
+    WHERE "dataFinal" IS NULL OR sysdate <= "dataFinal"
+    GROUP BY "numJogador"
+    HAVING COUNT(*) = 1
+)
+
 -- 9. Liste apenas os estadios cujo nome contenha as letras "P" ou "B".
 SELECT * FROM "T_ESTADIO"
 WHERE "nome" LIKE '%P%'
