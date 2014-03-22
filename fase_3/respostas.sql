@@ -62,6 +62,15 @@ and TO_CHAR("data", 'HH24:MI:SS') <= '19:30:00'
 -- So devem ser incluidos na lista os jogadores que tenham registrado passe com, pelo menos, dois times.
 
 -- 12. Quais foram os jogadores que marcaram gols na rodada do dia 23/02/2014?
+SELECT profissional.* FROM (
+SELECT "numJogador" FROM
+"T_JOGO_JOGADOR_JOGA" J_Joga, T_JOGO_JOGADOR_GOLEIA J_Goleia, "T_JOGO" Jogo
+WHERE
+J_Joga."numJogo" = J_Goleia."numJogo"
+and J_Joga."numTime" = J_Goleia."numTime"
+and J_Joga."camisa" = J_Goleia."camisa"
+and TO_CHAR(Jogo."data", 'DD/MM/YYYY') = '23/02/2014') ID_Goleadores, "T_PROFISSIONAL" profissional
+WHERE ID_Goleadores."numJogador" = profissional."numCadastro";
 
 -- 13. Liste os jogadores com mais de 2 cartoes de vermelhos.
 SELECT "nome", "vermelhos"
@@ -75,6 +84,10 @@ FROM
 WHERE "vermelhos" > 2
 
 -- 14. Crie uma view que liste os times que possuem contrato de 2 anos ou mais com pelo menos 1 jogador.
+CREATE VIEW PASSES_MAIS_DOIS_ANOS_E_MEIO(nome) AS
+SELECT DISTINCT "nome"
+FROM T_TIME_PASSE_JOG, T_TIME
+WHERE ("dataFinal" - "dataInicial")/365 >= 2.5 AND "numCadastro" = "numTime"
 
 -- 15. Quais foram os tecnicos que treinaram mais de um time no campeonato?
 SELECT T_PROFISSIONAL."nome"
