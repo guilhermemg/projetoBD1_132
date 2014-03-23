@@ -30,6 +30,15 @@ ORDER BY "nome" ASC;
 -- 4. Faca uma trigger que obrigue que um jogo tenha somente jogadores dos dois times. 
 
 -- 5. Faca uma trigger que obrigue que todos os profissionais sejam maiores de 18 anos considerando para este calculo a data de insercao do profissional.
+CREATE OR REPLACE TRIGGER PROFISSIONAIS_MAIORES_DE_IDADE
+BEFORE INSERT OR UPDATE OF "dataNascimento" ON T_PROFISSIONAL
+FOR EACH ROW
+BEGIN
+IF ((sysdate - :NEW."dataNascimento")/365.0 < 18) THEN
+RAISE_APPLICATION_ERROR(-20000, 'Profissionais precisam ter mais que 18 anos.');
+END IF;
+END;
+
 -- 6. Liste todos os estadios ordenados, decrescentemente, pela capacidade de publico.
 SELECT "nome" FROM  T_ESTADIO ORDER BY "capacidade" DESC;
 
