@@ -43,7 +43,7 @@ for each row
         );     
 
         IF (cnt_times <> 1) THEN
-            RAISE_APPLICATION_ERROR(-22222, 'Jogador nao pertencente a times do jogo');
+            RAISE_APPLICATION_ERROR(22, 'Jogador nao pertencente a times do jogo');
         END IF;
     END;
 
