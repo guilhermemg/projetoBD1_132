@@ -28,6 +28,24 @@ SELECT "nome" FROM  T_TIME
 ORDER BY "nome" ASC;
 
 -- 4. Faca uma trigger que obrigue que um jogo tenha somente jogadores dos dois times. 
+create or replace trigger "VERIFICA_JOGADORES_POR_JOGO"
+BEFORE
+insert or update on "T_JOGO_JOGADOR_JOGA"
+for each row
+
+    DECLARE cnt_times NUMBER;
+
+    BEGIN
+        SELECT COUNT(*) INTO cnt_times FROM T_JOGO_JOGADOR_JOGA, T_JOGO_TIME 
+        WHERE (T_JOGO_JOGADOR_JOGA."numTime" = :new."numTime" AND :new."numTime" IN (
+                SELECT "numTime" FROM T_JOGO_TIME WHERE "numTime" = :new."numTime" 
+            AND :new."numJogo" = "numJogo")
+        );     
+
+        IF (cnt_times <> 1) THEN
+            RAISE_APPLICATION_ERROR(-22222, 'Jogador nao pertencente a times do jogo');
+        END IF;
+    END;
 
 -- 5. Faca uma trigger que obrigue que todos os profissionais sejam maiores de 18 anos considerando para este calculo a data de insercao do profissional.
 CREATE OR REPLACE TRIGGER PROFISSIONAIS_MAIORES_DE_IDADE
